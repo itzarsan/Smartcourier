@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Track Shipment - SmartShip</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <style>
+        body { background-color: #f4f6f9; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
+        .search-box { background: linear-gradient(135deg, #0d6efd 0%, #0043a8 100%); padding: 60px 0; color: white; }
+        .search-input { border-radius: 50px 0 0 50px; padding: 15px 25px; border: none; font-size: 1.1rem; }
+        .search-btn { border-radius: 0 50px 50px 0; padding: 15px 30px; font-weight: bold; }
+        .card { border: none; border-radius: 12px; box-shadow: 0 5px 15px rgba(0,0,0,0.05); }
+        .timeline { position: relative; margin: 40px 0; padding-left: 0; list-style: none; display: flex; justify-content: space-between; align-items: flex-start; }
+        .timeline::before { content: ''; position: absolute; top: 20px; left: 0; width: 100%; height: 4px; background: #e9ecef; z-index: 1; }
+        .timeline-step { position: relative; z-index: 2; text-align: center; flex: 1; }
+        .timeline-icon { width: 44px; height: 44px; border-radius: 50%; background: #e9ecef; color: #adb5bd; display: flex; align-items: center; justify-content: center; margin: 0 auto 10px; font-size: 18px; border: 4px solid white; transition: all 0.3s; }
+        .timeline-step.active .timeline-icon { background: #0d6efd; color: white; box-shadow: 0 0 0 4px rgba(13, 110, 253, 0.2); }
+        .timeline-step.completed .timeline-icon { background: #198754; color: white; }
+        .timeline-content h6 { font-weight: 600; margin-bottom: 2px; font-size: 0.9rem; }
+        .timeline-content p { font-size: 0.75rem; color: #6c757d; margin: 0; }
+        @media (max-width: 768px) {
+            .timeline { flex-direction: column; align-items: flex-start; padding-left: 30px; }
+            .timeline::before { top: 0; left: 20px; width: 4px; height: 100%; }
+            .timeline-step { display: flex; align-items: center; text-align: left; margin-bottom: 25px; width: 100%; }
+            .timeline-icon { margin: 0 15px 0 0; }
+        }
+    </style>
+</head>
+<body>
+<nav class="navbar navbar-expand-lg navbar-light bg-white sticky-top shadow-sm">
+  <div class="container">
+    <a class="navbar-brand fw-bold text-primary" href="/"><i class="fas fa-shipping-fast me-2"></i>SmartShip</a>
+    <a href="/login" class="btn btn-outline-primary btn-sm ms-auto">Login to Dashboard</a>
+  </div>
+</nav>
+
+<section class="search-box text-center">
+    <div class="container">
+        <h2 class="fw-bold mb-3">Track Your Shipment</h2>
+        <p class="mb-4 opacity-75">Enter your tracking ID to get real-time updates</p>
+        <div class="row justify-content-center">
+            <div class="col-md-8 col-lg-6">
+                <form action="/track" method="get" class="d-flex shadow rounded-pill">
+                    <input type="text" name="trackingId" class="form-control search-input" placeholder="e.g. TRK123456789" required th:value="${param.trackingId}" />
+                    <button type="submit" class="btn btn-warning search-btn text-dark"><i class="fas fa-search me-2"></i>Track</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</section>
+
+<div class="container mt-5 mb-5">
+    <div th:if="${error}" class="alert alert-danger text-center rounded-3 shadow-sm border-0">
+        <i class="fas fa-exclamation-circle fa-2x mb-2 d-block"></i>
+        <strong th:text="${error}"></strong>
+    </div>
+
+    <div th:if="${booking}" class="card overflow-hidden">
+        <div class="card-header bg-white border-bottom py-3 d-flex justify-content-between align-items-center">
+            <h5 class="mb-0 fw-bold"><i class="fas fa-box text-primary me-2"></i>Tracking ID: <span class="text-primary" th:text="${booking.trackingId}"></span></h5>
+            <span th:class="'badge rounded-pill ' + (${booking.status.name() == 'DELIVERED'} ? 'bg-success' : (${booking.status.name() == 'FAILED'} ? 'bg-danger' : 'bg-primary'))" th:text="${booking.status}" style="font-size: 0.9rem;"></span>
+        </div>
+        
+        <div class="card-body p-4 p-md-5">
+            <!-- Visual Timeline -->
+            <ul class="timeline mb-5">
+                <li th:class="'timeline-step ' + (${booking.status.name() == 'BOOKED' or booking.status.name() == 'ASSIGNED' or booking.status.name() == 'IN_TRANSIT' or booking.status.name() == 'OUT_FOR_DELIVERY' or booking.status.name() == 'DELIVERED'} ? 'completed' : '')">
+                    <div class="timeline-icon"><i class="fas fa-clipboard-check"></i></div>
+                    <div class="timeline-content">
+                        <h6>Booked</h6>
+                        <p>Order Placed</p>
+                    </div>
+                </li>
+                <li th:class="'timeline-step ' + (${booking.status.name() == 'ASSIGNED' or booking.status.name() == 'IN_TRANSIT' or booking.status.name() == 'OUT_FOR_DELIVERY' or booking.status.name() == 'DELIVERED'} ? 'completed' : '')">
+                    <div class="timeline-icon"><i class="fas fa-user-check"></i></div>
+                    <div class="timeline-content">
+                        <h6>Assigned</h6>
+                        <p>Agent Assigned</p>
+                    </div>
+                </li>
+                <li th:class="'timeline-step ' + (${booking.status.name() == 'IN_TRANSIT' or booking.status.name() == 'OUT_FOR_DELIVERY' or booking.status.name() == 'DELIVERED'} ? 'completed' : '')">
+                    <div class="timeline-icon"><i class="fas fa-truck-loading"></i></div>
+                    <div class="timeline-content">
+                        <h6>In Transit</h6>
+                        <p>On the Way</p>
+                    </div>
+                </li>
+                <li th:class="'timeline-step ' + (${booking.status.name() == 'OUT_FOR_DELIVERY' or booking.status.name() == 'DELIVERED'} ? 'completed' : '')">
+                    <div class="timeline-icon"><i class="fas fa-motorcycle"></i></div>
+                    <div class="timeline-content">
+                        <h6>Out for Delivery</h6>
+                        <p>Reaching Soon</p>
+                    </div>
+                </li>
+                <li th:class="'timeline-step ' + (${booking.status.name() == 'DELIVERED'} ? 'completed' : '')">
+                    <div class="timeline-icon"><i class="fas fa-home"></i></div>
+                    <div class="timeline-content">
+                        <h6>Delivered</h6>
+                        <p>Successfully</p>
+                    </div>
+                </li>
+            </ul>
+
+            <div class="row g-4 mb-4">
+                <div class="col-md-6">
+                    <div class="bg-light p-3 rounded h-100">
+                        <h6 class="text-muted mb-3 text-uppercase small fw-bold">From (Sender)</h6>
+                        <p class="mb-1 fw-bold" th:text="${booking.senderName}"></p>
+                        <p class="mb-0 small text-muted"><i class="fas fa-map-marker-alt me-2"></i><span th:text="${booking.pickupAddress}"></span></p>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="bg-light p-3 rounded h-100">
+                        <h6 class="text-muted mb-3 text-uppercase small fw-bold">To (Receiver)</h6>
+                        <p class="mb-1 fw-bold" th:text="${booking.receiverName}"></p>
+                        <p class="mb-0 small text-muted"><i class="fas fa-map-marker-alt me-2"></i><span th:text="${booking.deliveryAddress}"></span></p>
+                    </div>
+                </div>
+            </div>
+
+            <h6 class="fw-bold mb-3"><i class="fas fa-history text-muted me-2"></i>Tracking History Log</h6>
+            <div class="table-responsive">
+                <table class="table table-hover border">
+                    <thead class="table-light text-muted small">
+                        <tr>
+                            <th>Date & Time</th>
+                            <th>Status</th>
+                            <th>Location</th>
+                            <th>Remarks</th>
+                        </tr>
+                    </thead>
+                    <tbody class="small">
+                        <tr th:each="hist : ${history}">
+                            <td th:text="${#temporals.format(hist.updateTime, 'dd MMM yyyy, HH:mm')}"></td>
+                            <td><span class="fw-bold" th:text="${hist.status}"></span></td>
+                            <td><i class="fas fa-map-pin text-danger me-1"></i> <span th:text="${hist.location}"></span></td>
+                            <td class="text-muted" th:text="${hist.remarks}"></td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+</body>
+</html>

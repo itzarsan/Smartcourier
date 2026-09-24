@@ -1,0 +1,496 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>SmartShip - Intelligent Courier Management</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <style>
+        :root {
+            --bg-dark: #0f172a;
+            --bg-darker: #0b1120;
+            --accent-yellow: #facc15;
+            --text-light: #f8fafc;
+            --card-bg: #1e293b;
+        }
+        body { 
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; 
+            background-color: var(--bg-dark); 
+            color: var(--text-light);
+            margin: 0;
+            padding: 0;
+            overflow-x: hidden;
+            scroll-behavior: smooth;
+        }
+        
+        /* Top Navigation */
+        .top-bar {
+            background-color: var(--bg-darker);
+            color: var(--accent-yellow);
+            font-size: 0.75rem;
+            font-weight: 700;
+            letter-spacing: 2px;
+            padding: 8px 0;
+            text-align: center;
+            text-transform: uppercase;
+        }
+        .navbar {
+            padding: 20px 0;
+            border-bottom: 1px solid rgba(255,255,255,0.05);
+            background-color: var(--bg-dark);
+        }
+        .navbar-brand {
+            color: var(--accent-yellow) !important;
+            font-weight: 800;
+            font-size: 1.8rem;
+            letter-spacing: 1px;
+        }
+        .brand-sub {
+            display: block;
+            font-size: 0.7rem;
+            color: white;
+            letter-spacing: 2px;
+            font-weight: 600;
+            text-transform: uppercase;
+            margin-top: -5px;
+        }
+        .nav-link {
+            color: white !important;
+            font-weight: 600;
+            font-size: 0.85rem;
+            text-transform: uppercase;
+            margin: 0 10px;
+            transition: color 0.3s;
+        }
+        .nav-link:hover, .nav-link.active {
+            color: var(--accent-yellow) !important;
+        }
+        
+        /* Hero Section */
+        .hero-section {
+            padding: 60px 0 80px;
+        }
+        .hero-title-yellow {
+            color: var(--accent-yellow);
+            font-weight: 800;
+            font-size: 3.5rem;
+            line-height: 1.2;
+        }
+        .hero-title-white {
+            color: white;
+            font-weight: 800;
+            font-size: 3.5rem;
+            line-height: 1.2;
+            margin-bottom: 20px;
+        }
+        .hero-text {
+            color: #cbd5e1;
+            font-size: 1rem;
+            margin-bottom: 40px;
+            line-height: 1.6;
+        }
+        
+        .booking-card {
+            background-color: rgba(30, 41, 59, 0.7);
+            border: 1px solid rgba(250, 204, 21, 0.3);
+            border-radius: 12px;
+            padding: 25px;
+            backdrop-filter: blur(10px);
+        }
+        .booking-card label {
+            color: var(--accent-yellow);
+            font-size: 0.75rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            margin-bottom: 8px;
+        }
+        .form-select, .form-control {
+            background-color: var(--bg-darker);
+            border: 1px solid rgba(255,255,255,0.1);
+            color: white;
+            border-radius: 6px;
+            padding: 10px 15px;
+        }
+        .form-select:focus, .form-control:focus {
+            background-color: var(--bg-darker);
+            color: white;
+            border-color: var(--accent-yellow);
+            box-shadow: 0 0 0 0.25rem rgba(250, 204, 21, 0.25);
+        }
+        .btn-yellow {
+            background-color: var(--accent-yellow);
+            color: var(--bg-darker);
+            font-weight: 700;
+            text-transform: uppercase;
+            padding: 12px;
+            border: none;
+            border-radius: 6px;
+            width: 100%;
+            transition: all 0.3s;
+        }
+        .btn-yellow:hover {
+            background-color: #eab308;
+            transform: translateY(-2px);
+        }
+        
+        .hero-img-container {
+            border: 2px solid var(--accent-yellow);
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.5);
+        }
+        .hero-img {
+            width: 100%;
+            height: auto;
+            display: block;
+        }
+        
+        /* Features Section (3 Cards) */
+        .features-section {
+            padding: 60px 0;
+            background-color: var(--bg-dark);
+        }
+        .feature-card {
+            background-color: var(--card-bg);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            border-radius: 12px;
+            padding: 40px 20px;
+            text-align: center;
+            height: 100%;
+            transition: transform 0.3s;
+        }
+        .feature-card:hover {
+            transform: translateY(-5px);
+            border-color: rgba(250, 204, 21, 0.3);
+        }
+        .feature-icon-wrapper {
+            width: 70px;
+            height: 70px;
+            background-color: var(--bg-darker);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 20px;
+        }
+        .feature-icon-wrapper i {
+            font-size: 30px;
+            color: var(--accent-yellow);
+        }
+        .feature-card h5 {
+            color: white;
+            font-weight: 700;
+            margin-bottom: 10px;
+        }
+        .feature-card p {
+            color: #94a3b8;
+            font-size: 0.9rem;
+            margin: 0;
+        }
+        
+        /* Footer Section */
+        .footer-section {
+            background-color: var(--bg-darker);
+            padding: 60px 0 20px;
+            border-top: 1px solid rgba(255, 255, 255, 0.05);
+        }
+        .footer-title {
+            color: var(--accent-yellow);
+            font-weight: 700;
+            font-size: 1.1rem;
+            margin-bottom: 20px;
+        }
+        .footer-text {
+            color: #94a3b8;
+            font-size: 0.9rem;
+            line-height: 1.6;
+        }
+        .footer-links {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+        .footer-links li {
+            margin-bottom: 10px;
+        }
+        .footer-links a {
+            color: #94a3b8;
+            text-decoration: none;
+            font-size: 0.9rem;
+            transition: color 0.3s;
+        }
+        .footer-links a:hover {
+            color: white;
+        }
+        .footer-links i {
+            font-size: 0.7rem;
+            margin-right: 8px;
+        }
+        .footer-bottom {
+            margin-top: 40px;
+            padding-top: 20px;
+            border-top: 1px solid rgba(255, 255, 255, 0.05);
+            text-align: center;
+            color: #64748b;
+            font-size: 0.8rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+        .social-mini {
+            display: inline-flex;
+            gap: 15px;
+            margin-top: 15px;
+        }
+        .social-mini a {
+            width: 35px;
+            height: 35px;
+            background-color: rgba(255,255,255,0.05);
+            color: var(--accent-yellow);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-decoration: none;
+            transition: all 0.3s;
+        }
+        .social-mini a:hover {
+            background-color: var(--accent-yellow);
+            color: var(--bg-darker);
+        }
+        
+        /* Floating Action Button (FAB) Menu */
+        .fab-container {
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            z-index: 1000;
+            display: flex;
+            flex-direction: column-reverse;
+            align-items: center;
+            gap: 15px;
+        }
+        .fab-menu {
+            display: flex;
+            flex-direction: column-reverse;
+            gap: 15px;
+            opacity: 0;
+            visibility: hidden;
+            transform: translateY(20px);
+            transition: all 0.3s ease-in-out;
+        }
+        .fab-menu.active {
+            opacity: 1;
+            visibility: visible;
+            transform: translateY(0);
+        }
+        .fab-btn {
+            width: 55px;
+            height: 55px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 24px;
+            text-decoration: none;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.5);
+            border: none;
+            cursor: pointer;
+            transition: transform 0.3s;
+        }
+        .fab-main {
+            background-color: black;
+            border: 2px solid rgba(255,255,255,0.1);
+        }
+        .fab-main i {
+            transition: transform 0.3s;
+        }
+        .fab-main.active i {
+            transform: rotate(45deg);
+        }
+        .fab-btn:hover {
+            transform: scale(1.1);
+            color: white;
+        }
+        .bg-whatsapp { background-color: #25D366; }
+        .bg-instagram { background: linear-gradient(45deg, #f09433 0%, #e6683c 25%, #dc2743 50%, #cc2366 75%, #bc1888 100%); }
+        .bg-facebook { background-color: #1877F2; }
+    </style>
+</head>
+<body>
+
+<div class="top-bar">
+    ONLINE COURIER MANAGEMENT SYSTEM
+</div>
+
+<nav class="navbar navbar-expand-lg sticky-top">
+  <div class="container">
+    <a class="navbar-brand" href="/">
+        SmartShip
+        <span class="brand-sub">Govt Regd</span>
+    </a>
+    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+      <i class="fas fa-bars text-white"></i>
+    </button>
+    <div class="collapse navbar-collapse" id="navbarNav">
+      <ul class="navbar-nav ms-auto align-items-center">
+        <li class="nav-item"><a class="nav-link active" href="#home">HOME</a></li>
+        <li class="nav-item"><a class="nav-link" href="#about">ABOUT</a></li>
+        <li class="nav-item"><a class="nav-link" href="#contact">CONTACT</a></li>
+        <li class="nav-item"><a class="nav-link" href="/track">TRACK</a></li>
+        <li class="nav-item"><a class="nav-link" href="/login">LOGIN</a></li>
+        <li class="nav-item"><a class="nav-link" href="/register">REGISTER</a></li>
+        <li class="nav-item"><a class="nav-link" href="/login">ADMIN</a></li>
+      </ul>
+    </div>
+  </div>
+</nav>
+
+<section id="home" class="hero-section">
+    <div class="container">
+        <div class="row align-items-center">
+            <div class="col-lg-6 mb-5 mb-lg-0">
+                <div class="hero-title-yellow">SmartShip</div>
+                <div class="hero-title-white">Logistics</div>
+                <p class="hero-text">Experience seamless and reliable courier services worldwide. Book your shipments instantly with real-time tracking and secure handling.</p>
+                
+                <div class="booking-card">
+                    <form action="/login" method="get">
+                        <div class="row g-3 mb-4">
+                            <div class="col-md-6">
+                                <label><i class="fas fa-map-marker-alt me-1"></i> FROM</label>
+                                <select class="form-select">
+                                    <option>Select Origin</option>
+                                    <option>Chennai</option>
+                                    <option>Coimbatore</option>
+                                    <option>Madurai</option>
+                                    <option>Trichy</option>
+                                </select>
+                            </div>
+                            <div class="col-md-6">
+                                <label><i class="fas fa-paper-plane me-1"></i> TO</label>
+                                <select class="form-select">
+                                    <option>Select Destination</option>
+                                    <option>Chennai</option>
+                                    <option>Coimbatore</option>
+                                    <option>Madurai</option>
+                                    <option>Salem</option>
+                                </select>
+                            </div>
+                            <div class="col-md-6">
+                                <label><i class="fas fa-calendar-alt me-1"></i> DISPATCH DATE</label>
+                                <input type="date" class="form-control" />
+                            </div>
+                            <div class="col-md-6">
+                                <label><i class="fas fa-box me-1"></i> PARCEL TYPE</label>
+                                <select class="form-select">
+                                    <option>Standard Delivery</option>
+                                    <option>Express Delivery</option>
+                                </select>
+                            </div>
+                        </div>
+                        <button type="submit" class="btn-yellow"><i class="fas fa-search me-2"></i> SEARCH COURIERS</button>
+                    </form>
+                </div>
+            </div>
+            
+            <div class="col-lg-6">
+                <div class="hero-img-container">
+                    <img src="https://img.freepik.com/free-photo/delivery-concept-handsome-african-american-delivery-man-carrying-package-box-grocery-food-drink-from-store-isolated-grey-studio-background-copy-space_1258-1229.jpg?w=1060" alt="Courier Service" class="hero-img">
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Features Section (The 3 Cards) -->
+<section id="about" class="features-section">
+    <div class="container">
+        <div class="row g-4 justify-content-center">
+            <div class="col-md-4">
+                <div class="feature-card">
+                    <div class="feature-icon-wrapper">
+                        <i class="fas fa-bus-alt"></i> <!-- Or fa-truck -->
+                    </div>
+                    <h5>Easy Booking</h5>
+                    <p>Book shipments quickly and efficiently online without any hassle.</p>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="feature-card">
+                    <div class="feature-icon-wrapper">
+                        <i class="fas fa-clock"></i>
+                    </div>
+                    <h5>On Time</h5>
+                    <p>Reliable schedules and on-time delivery across all major destinations.</p>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="feature-card">
+                    <div class="feature-icon-wrapper">
+                        <i class="fas fa-shield-alt"></i>
+                    </div>
+                    <h5>Safe Travel</h5>
+                    <p>Secure journey and handling for your most valuable packages.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Footer Section -->
+<footer id="contact" class="footer-section">
+    <div class="container">
+        <div class="row g-5">
+            <div class="col-md-4">
+                <h5 class="footer-title">SmartShip Courier</h5>
+                <p class="footer-text">Experience seamless and reliable transportation across the state. Your premium delivery journey begins here with secure and fast handling.</p>
+            </div>
+            <div class="col-md-4">
+                <h5 class="footer-title">Quick Links</h5>
+                <ul class="footer-links">
+                    <li><a href="#home"><i class="fas fa-chevron-right"></i> Home</a></li>
+                    <li><a href="#about"><i class="fas fa-chevron-right"></i> About Us</a></li>
+                    <li><a href="#contact"><i class="fas fa-chevron-right"></i> Contact</a></li>
+                    <li><a href="/login"><i class="fas fa-chevron-right"></i> Login</a></li>
+                </ul>
+            </div>
+            <div class="col-md-4">
+                <h5 class="footer-title">Connect With Us</h5>
+                <p class="footer-text">Follow us on our social platforms for the latest updates and support.</p>
+                <div class="social-mini">
+                    <a href="#"><i class="fab fa-whatsapp"></i></a>
+                    <a href="#"><i class="fab fa-instagram"></i></a>
+                    <a href="#"><i class="fab fa-facebook-f"></i></a>
+                    <a href="#"><i class="fa-brands fa-x-twitter"></i></a>
+                </div>
+            </div>
+        </div>
+        <div class="footer-bottom">
+            &copy; 2026 ONLINE COURIER MANAGEMENT SYSTEM. All Rights Reserved.
+        </div>
+    </div>
+</footer>
+
+<!-- Interactive FAB (Floating Action Button) -->
+<div class="fab-container">
+    <button class="fab-btn fab-main" id="fab-main-btn">
+        <i class="fas fa-plus"></i> <!-- Rotates to X when active -->
+    </button>
+    <div class="fab-menu" id="fab-menu">
+        <a href="#" class="fab-btn bg-facebook"><i class="fab fa-facebook-f"></i></a>
+        <a href="#" class="fab-btn bg-instagram"><i class="fab fa-instagram"></i></a>
+        <a href="#" class="fab-btn bg-whatsapp"><i class="fab fa-whatsapp"></i></a>
+    </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+<script>
+    // Script for the Floating Action Button click reveal
+    document.getElementById('fab-main-btn').addEventListener('click', function() {
+        this.classList.toggle('active');
+        document.getElementById('fab-menu').classList.toggle('active');
+    });
+</script>
+</body>
+</html>
